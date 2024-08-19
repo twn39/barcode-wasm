@@ -1,5 +1,8 @@
 [package]
 name = "barcode-wasm"
+description = "A barcode generator written in Rust"
+repository = "git+https://github.com/twn39/barcode-wasm.git"
+license = "AGPL-3"
 version = "0.1.0"
 authors = ["curry tang <twn39@163.com>"]
 edition = "2021"
