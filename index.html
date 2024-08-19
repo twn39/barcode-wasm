@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Barcode Generator</title>
+</head>
+<body>
+<input id="data" type="text" placeholder="Enter barcode data">
+<select id="type">
+  <option value="QRCode">QR Code</option>
+  <option value="DataMatrix">Data Matrix</option>
+  <option value="PDF417">PDF417</option>
+  <option value="EAN13">EAN-13</option>
+  <option value="CODE128">Code 128</option>
+  <option value="AZTEC">aztec</option>
+  <option value="ITF">ITF</option>
+</select>
+
+<select id="format">
+  <option value="PNG">PNG</option>
+  <option value="JPEG">JPEG</option>
+  <option value="SVG">SVG</option>
+</select>
+
+<button id="generate">Generate Barcode</button>
+
+<a id="download" style="display: none;">Download Barcode</a>
+
+<br>
+<img id="barcode" src="" alt="Generated Barcode">
+
+<script type="module">
+  import init, { generate_barcode, BarcodeType,  OutputFormat} from './pkg/barcode_wasm.js';
+
+  async function run() {
+    await init();
+
+    document.getElementById('generate').addEventListener('click', () => {
+      const data = document.getElementById('data').value;
+      const type = document.getElementById('type').value;
+      const outputFormat = document.getElementById('format').value;
+      const barcodeType = BarcodeType[type];
+      const format = OutputFormat[outputFormat];
+
+      const buffer = generate_barcode(data, barcodeType, 450, 450, format);
+
+      const mimeTypes = {
+        PNG: 'image/png',
+        JPEG: 'image/jpeg',
+        SVG: 'image/svg+xml',
+      };
+
+      const blob = new Blob([buffer], { type: mimeTypes[outputFormat] });
+      const url = URL.createObjectURL(blob);
+      document.getElementById('barcode').src = url;
+
+      const downloadLink = document.getElementById('download');
+      downloadLink.href = url;
+      downloadLink.download = `barcode.${outputFormat.toLowerCase()}`;
+      downloadLink.style.display = 'inline';
+    });
+  }
+
+  run();
+</script>
+</body>
+</html>
